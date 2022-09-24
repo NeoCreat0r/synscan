@@ -1,0 +1,4 @@
+scapy
+PyQt5
+socket
+os
