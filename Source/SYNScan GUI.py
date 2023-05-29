@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(300, 350)
+        MainWindow.resize(550, 350)
         font = QtGui.QFont()
         font.setPointSize(10)
         MainWindow.setFont(font)
@@ -100,12 +100,12 @@ class Ui_MainWindow(object):
         self.ip_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         self.ip_lineEdit.setGeometry(QtCore.QRect(120, 110, 161, 22))
         font = QtGui.QFont()
-        font.setFamily("Impact")
+        font.setFamily("Arial")
         self.ip_lineEdit.setFont(font)
         self.ip_lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.ip_lineEdit.setObjectName("ip_lineEdit")
         self.check_textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.check_textEdit.setGeometry(QtCore.QRect(20, 140, 261, 111))
+        self.check_textEdit.setGeometry(QtCore.QRect(20, 140, 500, 111))
         self.check_textEdit.setStyleSheet("color: rgb(255, 255, 255);\n"
                                           "background-color: rgb(32, 34, 33);")
         self.check_textEdit.setObjectName("check_textEdit")
