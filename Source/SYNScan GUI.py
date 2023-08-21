@@ -23,17 +23,28 @@ class Ui_MainWindow(object):
     def scan_target(self):
         def icmp_probe(ip):  # Здесь производится проверка на наличие сервера в сети
             icmp_packet = IP(dst=ip) / ICMP()
-            resp_packet = sr1(icmp_packet, timeout=10)  # Отправка и прием одного пакета
+            resp_packet = sr1(icmp_packet, timeout=5)  # Отправка и прием одного пакета
             return resp_packet is not None
 
         def syn_scan(ip, ports):  # В данном месте проводится сканирование путем отправки пакетов
             for port in ports:  # Проходимся по каждому порту и отправляем TCP пакет
                 syn_packet = IP(dst=ip) / TCP(dport=port, flags="S")  # Флаг S означает SYN пакет
                 resp_packet = sr1(syn_packet, timeout=10)  # Время ожидания пакета можно ставить свое
+            
                 if resp_packet is not None:
-                    if resp_packet.getlayer('TCP').flags & 0x12 != 0:
+                   if resp_packet.getlayer('TCP').flags == 0x12: # проверить, открыт ли порт
+                        print(f"{ip}:{port} is open/{resp_packet.sprintf('%TCP.sport%')}")
                         self.check_textEdit.append(f"{ip}:{port} is open/{resp_packet.sprintf('%TCP.sport%')}")
-
+                   if resp_packet.getlayer(TCP).flags == 0x14:# проверить, закрыт ли порт
+                        print(f"{ip}:{port} is closed/{resp_packet.sprintf('%TCP.sport%')}")
+                        self.check_textEdit.append(f"{ip}:{port} is closed/{resp_packet.sprintf('%TCP.sport%')}")
+                else :
+                     # если ответ не получен, считается, что порт отфильтрован.
+                     # Фильтрованный порт - это порт, который блокируется или фильтруется брандмауэром или 
+                     # другим механизмом безопасности в системе или сети.
+                     print(f"{ip}:{port} is filtered")
+                     self.check_textEdit.append(f"{ip}:{port} is filtered")
+                     
         if __name__ == "__main__":
             name = self.ip_lineEdit.text()  # Задаем цель (без http/https)
             if self.ip_lineEdit.text() == "":
@@ -65,7 +76,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(300, 350)
+        MainWindow.resize(550, 350)
         font = QtGui.QFont()
         font.setPointSize(10)
         MainWindow.setFont(font)
@@ -89,12 +100,12 @@ class Ui_MainWindow(object):
         self.ip_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         self.ip_lineEdit.setGeometry(QtCore.QRect(120, 110, 161, 22))
         font = QtGui.QFont()
-        font.setFamily("Impact")
+        font.setFamily("Arial")
         self.ip_lineEdit.setFont(font)
         self.ip_lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.ip_lineEdit.setObjectName("ip_lineEdit")
         self.check_textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.check_textEdit.setGeometry(QtCore.QRect(20, 140, 261, 111))
+        self.check_textEdit.setGeometry(QtCore.QRect(20, 140, 500, 111))
         self.check_textEdit.setStyleSheet("color: rgb(255, 255, 255);\n"
                                           "background-color: rgb(32, 34, 33);")
         self.check_textEdit.setObjectName("check_textEdit")
